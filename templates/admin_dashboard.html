@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - Code Genie</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+
+    body {
+        background: #0f172a;
+        color: white;
+        min-height: 100vh;
+    }
+
+    .navbar {
+        background: #1e293b;
+        padding: 16px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .navbar h1 { font-size: 20px; font-weight: 700; }
+
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .logout-btn {
+        padding: 8px 18px;
+        background: linear-gradient(90deg, #ff4e50, #f9d423);
+        border-radius: 8px;
+        text-decoration: none;
+        color: white;
+        font-weight: 700;
+        font-size: 13px;
+        transition: 0.3s;
+    }
+
+    .logout-btn:hover { opacity: 0.85; }
+
+    .main { padding: 30px 40px; }
+
+    .page-title {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: #1e293b;
+        border-radius: 16px;
+        padding: 24px;
+        border-left: 4px solid;
+        transition: 0.3s;
+    }
+
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-card.blue { border-color: #3b82f6; }
+    .stat-card.green { border-color: #22c55e; }
+    .stat-card.purple { border-color: #8b5cf6; }
+    .stat-card.orange { border-color: #f97316; }
+
+    .stat-card .number {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .stat-card.blue .number { color: #3b82f6; }
+    .stat-card.green .number { color: #22c55e; }
+    .stat-card.purple .number { color: #8b5cf6; }
+    .stat-card.orange .number { color: #f97316; }
+
+    .stat-card .label {
+        font-size: 14px;
+        opacity: 0.7;
+    }
+
+    .charts {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 30px;
+    }
+
+    .chart-card {
+        background: #1e293b;
+        border-radius: 16px;
+        padding: 20px;
+        height: 380px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chart-card h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        opacity: 0.9;
+        flex-shrink: 0;
+    }
+
+    .chart-card canvas {
+        flex: 1;
+        min-height: 0;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        padding: 9px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #1e293b;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        opacity: 0.7;
+    }
+
+    .tab-btn.active {
+        background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        opacity: 1;
+    }
+
+    .tab-btn:hover { opacity: 1; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .table-wrap {
+        background: #1e293b;
+        border-radius: 16px;
+        padding: 24px;
+        overflow-x: auto;
+    }
+
+    .table-wrap h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 18px;
+        opacity: 0.9;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    th {
+        text-align: left;
+        padding: 10px 14px;
+        background: rgba(255,255,255,0.06);
+        font-weight: 700;
+        opacity: 0.8;
+        white-space: nowrap;
+    }
+
+    th:first-child { border-radius: 8px 0 0 8px; }
+    th:last-child { border-radius: 0 8px 8px 0; }
+
+    td {
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        opacity: 0.8;
+        vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+
+    .badge {
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .badge-blue { background: rgba(59,130,246,0.2); color: #93c5fd; }
+    .badge-green { background: rgba(34,197,94,0.2); color: #86efac; }
+    .badge-purple { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+    .badge-orange { background: rgba(249,115,22,0.2); color: #fdba74; }
+    .badge-yellow { background: rgba(245,158,11,0.2); color: #fcd34d; }
+    .badge-red { background: rgba(239,68,68,0.2); color: #fca5a5; }
+
+    .timestamp {
+        font-size: 12px;
+        opacity: 0.5;
+        white-space: nowrap;
+    }
+
+    .prompt-text {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .stars { color: #f9d423; }
+
+    .empty {
+        text-align: center;
+        padding: 30px;
+        opacity: 0.4;
+        font-size: 14px;
+    }
+
+    .search-bar {
+        width: 100%;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.05);
+        color: white;
+        font-size: 14px;
+        margin-bottom: 16px;
+        outline: none;
+    }
+
+    .search-bar:focus {
+        border-color: rgba(59,130,246,0.5);
+        background: rgba(255,255,255,0.08);
+    }
+
+    .search-bar::placeholder { color: rgba(255,255,255,0.3); }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h1>🔐 Code Genie — Admin Panel</h1>
+    <div class="navbar-right">
+        <span>👤 {{ session['admin'] }}</span>
+        <a href="{{ url_for('admin_logout') }}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="main">
+
+    <p class="page-title">📊 Dashboard Overview</p>
+
+    <div class="stats">
+        <div class="stat-card blue">
+            <div class="number">{{ total_users }}</div>
+            <div class="label">👥 Total Users</div>
+        </div>
+        <div class="stat-card green">
+            <div class="number">{{ total_generations }}</div>
+            <div class="label">⚡ Code Generations</div>
+        </div>
+        <div class="stat-card purple">
+            <div class="number">{{ total_feedback }}</div>
+            <div class="label">💬 Feedbacks</div>
+        </div>
+        <div class="stat-card orange">
+            <div class="number">{{ total_logs }}</div>
+            <div class="label">📋 Activity Logs</div>
+        </div>
+    </div>
+
+    <div class="charts">
+        <div class="chart-card">
+            <h3>🌐 Language Usage</h3>
+            <canvas id="langChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>📈 Daily Code Generations</h3>
+            <canvas id="dailyChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>⭐ Feedback Rating Distribution</h3>
+            <canvas id="ratingChart"></canvas>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('users', this)">👥 Users</button>
+        <button class="tab-btn" onclick="showTab('history', this)">⚡ Code History</button>
+        <button class="tab-btn" onclick="showTab('feedback', this)">💬 Feedback</button>
+        <button class="tab-btn" onclick="showTab('logs', this)">📋 Activity Logs</button>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="tab-content active" id="tab-users">
+        <div class="table-wrap">
+            <h3>👥 All Registered Users</h3>
+            <input class="search-bar" placeholder="🔍 Search users..." oninput="filterTable(this, 'users-table')">
+            {% if users %}
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ u['name'] }}</strong></td>
+                        <td>{{ u['email'] }}</td>
+                        <td><span class="timestamp">{{ u['created_at'][:16] if u['created_at'] else 'N/A' }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">No users registered yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- History Tab -->
+    <div class="tab-content" id="tab-history">
+        <div class="table-wrap">
+            <h3>⚡ Code Generation History</h3>
+            <input class="search-bar" placeholder="🔍 Search history..." oninput="filterTable(this, 'history-table')">
+            {% if history %}
+            <table id="history-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Language</th>
+                        <th>Prompt</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in history %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ h['user_name'] }}</strong></td>
+                        <td>
+                            {% if h['language'] == 'Python' %}
+                                <span class="badge badge-blue">Python</span>
+                            {% elif h['language'] == 'Java' %}
+                                <span class="badge badge-red">Java</span>
+                            {% elif h['language'] == 'C' %}
+                                <span class="badge badge-green">C</span>
+                            {% elif h['language'] == 'C++' %}
+                                <span class="badge badge-purple">C++</span>
+                            {% elif h['language'] == 'JavaScript' %}
+                                <span class="badge badge-yellow">JavaScript</span>
+                            {% endif %}
+                        </td>
+                        <td><div class="prompt-text">{{ h['prompt'] }}</div></td>
+                        <td><span class="timestamp">{{ h['timestamp'][:16] if h['timestamp'] else 'N/A' }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">No code generated yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Feedback Tab -->
+    <div class="tab-content" id="tab-feedback">
+        <div class="table-wrap">
+            <h3>💬 User Feedback</h3>
+            {% if feedbacks %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Message</th>
+                        <th>Rating</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fb in feedbacks %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ fb['user_name'] }}</strong></td>
+                        <td>{{ fb['message'] }}</td>
+                        <td>
+                            <span class="stars">
+                                {% for i in range(fb['rating']) %}★{% endfor %}
+                                {% for i in range(5 - fb['rating']) %}☆{% endfor %}
+                            </span>
+                        </td>
+                        <td><span class="timestamp">{{ fb['timestamp'][:16] if fb['timestamp'] else 'N/A' }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">No feedback submitted yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Logs Tab -->
+    <div class="tab-content" id="tab-logs">
+        <div class="table-wrap">
+            <h3>📋 Activity Logs</h3>
+            <input class="search-bar" placeholder="🔍 Search logs..." oninput="filterTable(this, 'logs-table')">
+            {% if logs %}
+            <table id="logs-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ log['user_name'] }}</strong></td>
+                        <td>
+                            {% if log['action'] == 'Login' %}
+                                <span class="badge badge-green">🔓 Login</span>
+                            {% elif log['action'] == 'Logout' %}
+                                <span class="badge badge-red">🔒 Logout</span>
+                            {% elif log['action'] == 'Generate Code' %}
+                                <span class="badge badge-blue">⚡ Generate</span>
+                            {% elif log['action'] == 'Explain Code' %}
+                                <span class="badge badge-purple">💡 Explain</span>
+                            {% elif log['action'] == 'Feedback' %}
+                                <span class="badge badge-yellow">💬 Feedback</span>
+                            {% elif log['action'] == 'Signup' %}
+                                <span class="badge badge-orange">🆕 Signup</span>
+                            {% else %}
+                                <span class="badge badge-blue">{{ log['action'] }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log['details'] }}</td>
+                        <td><span class="timestamp">{{ log['timestamp'][:16] if log['timestamp'] else 'N/A' }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">No activity logs yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+function showTab(tab, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    btn.classList.add('active');
+}
+
+function filterTable(input, tableId) {
+    const filter = input.value.toLowerCase();
+    const rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+    });
+}
+
+const langLabels = [{% for l in lang_data %}"{{ l['language'] }}"{% if not loop.last %},{% endif %}{% endfor %}];
+const langCounts = [{% for l in lang_data %}{{ l['count'] }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+new Chart(document.getElementById('langChart'), {
+    type: 'doughnut',
+    data: {
+        labels: langLabels,
+        datasets: [{
+            data: langCounts,
+            backgroundColor: ['#3b82f6','#ef4444','#22c55e','#8b5cf6','#f59e0b'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: { color: 'white', font: { size: 12 } }
+            }
+        }
+    }
+});
+
+const dailyLabels = [{% for d in daily_data %}"{{ d['day'] }}"{% if not loop.last %},{% endif %}{% endfor %}];
+const dailyCounts = [{% for d in daily_data %}{{ d['count'] }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+new Chart(document.getElementById('dailyChart'), {
+    type: 'bar',
+    data: {
+        labels: dailyLabels.reverse(),
+        datasets: [{
+            label: 'Generations',
+            data: dailyCounts.reverse(),
+            backgroundColor: '#3b82f6',
+            borderRadius: 6
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { labels: { color: 'white' } }
+        },
+        scales: {
+            x: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+    }
+});
+
+// Rating distribution chart
+const allRatings = [5, 4, 3, 2, 1];
+const ratingMap = {};
+{% for r in rating_data %}
+ratingMap[{{ r['rating'] }}] = {{ r['count'] }};
+{% endfor %}
+const ratingCounts = allRatings.map(r => ratingMap[r] || 0);
+
+new Chart(document.getElementById('ratingChart'), {
+    type: 'bar',
+    data: {
+        labels: ['5 Stars', '4 Stars', '3 Stars', '2 Stars', '1 Star'],
+        datasets: [{
+            label: 'Number of Reviews',
+            data: ratingCounts,
+            backgroundColor: [
+                '#22c55e',
+                '#84cc16',
+                '#f59e0b',
+                '#f97316',
+                '#ef4444'
+            ],
+            borderRadius: 6
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { labels: { color: 'white' } }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: 'rgba(255,255,255,0.7)',
+                    font: { size: 13, weight: 'bold' }
+                },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+                ticks: {
+                    color: 'rgba(255,255,255,0.7)',
+                    stepSize: 1
+                },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

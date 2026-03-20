@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login - Code Genie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <style>
+        .admin-badge {
+            background: linear-gradient(90deg, #ff4e50, #f9d423);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="admin-badge">🔐 Admin Access</div>
+    <h1>Code Genie</h1>
+    <p>Admin Dashboard Login</p>
+
+    <form method="POST">
+        <input type="text" name="username" placeholder="Admin username" required>
+        <input type="password" name="password" placeholder="Admin password" required>
+
+        {% if error %}
+        <p style="color:#ffb3b3; font-size:14px; text-align:center;">{{ error }}</p>
+        {% endif %}
+
+        <button type="submit">Login as Admin</button>
+    </form>
+
+    <p class="signup-text">
+        Not an admin?
+        <a href="{{ url_for('login') }}">User Login</a>
+    </p>
+</div>
+
+</body>
+</html>

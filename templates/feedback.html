@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback - Code Genie</title>
+    <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+
+    body {
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+    }
+
+    .card {
+        background: linear-gradient(135deg, #1d649f, hsl(185,59%,52%));
+        width: 480px;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        color: white;
+    }
+
+    h2 {
+        font-size: 26px;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    .subtitle {
+        text-align: center;
+        opacity: 0.85;
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+
+    label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        opacity: 0.9;
+    }
+
+    textarea {
+        width: 100%;
+        height: 140px;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        font-size: 14px;
+        background: rgba(255,255,255,0.95);
+        color: #333;
+        resize: vertical;
+        margin-bottom: 20px;
+    }
+
+    textarea:focus {
+        outline: none;
+        box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    }
+
+    .rating-label {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        opacity: 0.9;
+    }
+
+    .stars {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 24px;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+    .stars input {
+        display: none;
+    }
+
+    .stars label {
+        font-size: 32px;
+        cursor: pointer;
+        color: rgba(255,255,255,0.4);
+        transition: 0.2s;
+        margin: 0;
+    }
+
+    .stars input:checked ~ label,
+    .stars label:hover,
+    .stars label:hover ~ label {
+        color: #f9d423;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .success-box {
+        background: rgba(34,197,94,0.2);
+        border: 1px solid #22c55e;
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 15px;
+        color: #86efac;
+    }
+
+    .back-btn {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        opacity: 0.85;
+        transition: 0.3s;
+    }
+
+    .back-btn:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>💬 Share Feedback</h2>
+    <p class="subtitle">Help us improve Code Genie!</p>
+
+    {% if success %}
+    <div class="success-box">
+        ✅ Thank you for your feedback, {{ user }}!
+    </div>
+    {% endif %}
+
+    <form method="POST">
+
+        <label>Your Message</label>
+        <textarea name="message" placeholder="Tell us what you think about Code Genie..." required></textarea>
+
+        <p class="rating-label">Rate your experience:</p>
+        <div class="stars">
+            <input type="radio" name="rating" id="s5" value="5" checked>
+            <label for="s5">★</label>
+            <input type="radio" name="rating" id="s4" value="4">
+            <label for="s4">★</label>
+            <input type="radio" name="rating" id="s3" value="3">
+            <label for="s3">★</label>
+            <input type="radio" name="rating" id="s2" value="2">
+            <label for="s2">★</label>
+            <input type="radio" name="rating" id="s1" value="1">
+            <label for="s1">★</label>
+        </div>
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+
+    <a href="{{ url_for('home') }}" class="back-btn">⬅ Back to Dashboard</a>
+</div>
+
+</body>
+</html>

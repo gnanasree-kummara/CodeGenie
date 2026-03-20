@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home - Code Genie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <h1>⚡ Code Genie Dashboard</h1>
+    <div style="display:flex; align-items:center; gap:15px;">
+        <span>👋 {{ user }}</span>
+        <div class="profile">{{ user[0] | upper }}</div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+    <div class="welcome">Welcome back, {{ user }}! 🎉</div>
+    <div class="subtitle">Your AI Explainer & Code Generator workspace.</div>
+
+    <!-- Cards -->
+    <div class="cards">
+
+        <a href="{{ url_for('generate_page') }}" class="card-link">
+            <div class="card">
+                <div style="font-size:32px; margin-bottom:12px;">⚡</div>
+                <h3>Generate Code</h3>
+                <p>Create code instantly in 5 languages using AI.</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('profile') }}" class="card-link">
+            <div class="card">
+                <div style="font-size:32px; margin-bottom:12px;">👤</div>
+                <h3>My Profile</h3>
+                <p>View your code history and activity.</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('feedback') }}" class="card-link">
+            <div class="card">
+                <div style="font-size:32px; margin-bottom:12px;">💬</div>
+                <h3>Give Feedback</h3>
+                <p>Share your experience with Code Genie.</p>
+            </div>
+        </a>
+
+    </div>
+
+    <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+
+</div>
+
+</body>
+</html>

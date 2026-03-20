@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Code Genie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+
+<div class="login-container">
+    <h1>Code Genie</h1>
+    <p>AI Explainer & Code Generator</p>
+
+    <form method="POST">
+        <input type="email" name="email" placeholder="Enter your email">
+        <input type="password" name="password" placeholder="Enter your password">
+        {% if error %}
+        <p style="color:red; font-size:14px; text-align:center;">
+            {{ error }}
+        </p>
+        {% endif %}
+        <p style="text-align:center;">
+            <a href="/signup" style="color:#191032; font-weight:bold;">
+                New user? Sign Up
+            </a>
+        </p>
+        <button type="submit">Sign In</button>
+    </form>
+</div>
+
+</body>
+</html>

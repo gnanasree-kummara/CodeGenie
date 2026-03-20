@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Genie AI Explainer And Code Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Hello AI</h2>
+    <p>Code Genie AI Explainer & Code Generator</p>
+
+    <form method="POST">
+        <textarea name="prompt" rows="4" placeholder="Enter your prompt..." required></textarea>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if response %}
+        <textarea rows="5" readonly>
+{{ response }}
+        </textarea>
+    {% endif %}
+</div>
+
+</body>
+</html>

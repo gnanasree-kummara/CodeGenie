@@ -1,0 +1,122 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Background */
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1f1c2c, #26478e);
+}
+
+/* Login Card */
+.login-container {
+    width: 360px;
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #1d649f, hsl(185, 59%, 52%));
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    color: white;
+    transition: 0.3s ease;
+}
+
+/* Title */
+.login-container h2 {
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.login-container p {
+    font-size: 14px;
+    margin-bottom: 30px;
+    opacity: 0.85;
+}
+
+/* Inputs */
+.login-container input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 18px;
+    border: none;
+    border-radius: 10px;
+    background: #f1f1f1;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+/* Input Focus Effect */
+.login-container input:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+}
+
+/* Button */
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+/* Button Hover */
+.login-container button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Footer Link */
+.auth-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.auth-footer a {
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Error Message */
+.error {
+    margin-top: 15px;
+    color: #ffb3b3;
+    font-size: 13px;
+}
+
+/* Signup page text */
+
+.signup-text{
+    text-align:center;
+    margin-top:15px;
+    color:white;
+    font-size:14px;
+}
+
+.signup-text a{
+    color:#FFD700;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.signup-text a:hover{
+    text-decoration:underline;
+}
