@@ -7,6 +7,9 @@ import database
 from datetime import datetime
 from dotenv import load_dotenv
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "users.db")
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -23,7 +26,7 @@ HEADERS = {
 # DB HELPER
 # ─────────────────────────────────────
 def get_db():
-    conn = sqlite3.connect("users.db")
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -358,6 +361,47 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS users(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS code_history(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        user_name TEXT,
+        language TEXT,
+        prompt TEXT,
+        generated_code TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS feedback(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        user_name TEXT,
+        message TEXT,
+        rating INTEGER,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS activity_logs(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        user_name TEXT,
+        action TEXT,
+        details TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS admins(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL)""")
+    cursor.execute("INSERT OR IGNORE INTO admins(username, password) VALUES('admin', 'admin123')")
+    conn.commit()
+    conn.close()
+
+init_db()
 # ─────────────────────────────────────
 # RUN
 # ─────────────────────────────────────
