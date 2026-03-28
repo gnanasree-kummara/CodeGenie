@@ -3,6 +3,7 @@ import sqlite3
 import requests
 import re
 import os
+import database
 from datetime import datetime
 from dotenv import load_dotenv
 
