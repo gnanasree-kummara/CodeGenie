@@ -100,35 +100,25 @@ def explain_code(code, language="Python"):
 # ─────────────────────────────────────
 # LOGIN
 # ─────────────────────────────────────
-@app.route('/login', methods=['GET','POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+    if request.method == "POST":
+        email = request.form.get("user_email")
+        password = request.form.get("user_password")
 
-        conn = sqlite3.connect('users.db')
-        conn.row_factory = sqlite3.Row
+        conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
 
-        user = cursor.execute(
-            "SELECT * FROM users WHERE email=?",
-            (email,)
-        ).fetchone()
+        cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
+        user = cursor.fetchone()
 
         conn.close()
 
-        # User not found
-        if not user:
-            return render_template("login.html", error="User not found. Please sign up.")
-
-        # Password wrong
-        if user['password'] != password:
-            return render_template("login.html", error="Incorrect password")
-
-        # Success
-        session['user'] = user['name']
-        session['user_id'] = user['id']
-        return redirect(url_for('home'))
+        if user:
+            session['user'] = user[1]  # store name
+            return redirect(url_for("home"))
+        else:
+            return render_template("login.html", error="Invalid email or password")
 
     return render_template("login.html")
 
@@ -138,9 +128,9 @@ def login():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        name = request.form["name"]
-        email = request.form["email"]
-        password = request.form["password"]
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
 
         conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
@@ -152,11 +142,13 @@ def signup():
             )
             conn.commit()
 
-            # ✅ IMPORTANT: redirect after signup
-            return redirect(url_for("login"))
+            # ✅ Auto login after signup
+            session['user'] = name
 
-        except:
-            return render_template("signup.html", error="User already exists")
+            return redirect(url_for("home"))
+
+        except sqlite3.IntegrityError:
+            return render_template("signup.html", error="Email already exists")
 
         finally:
             conn.close()
@@ -377,8 +369,9 @@ def admin_logout():
 def logout():
     if 'user_id' in session:
         log_activity(session['user_id'], session['user'], "Logout", "User logged out")
-    session.pop('user', None)
-    session.pop('user_id', None)
+
+    session.clear()  # 🔥 clears everything
+
     return redirect(url_for('login'))
 
 
