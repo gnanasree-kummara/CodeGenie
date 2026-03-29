@@ -22,6 +22,9 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
+@app.route("/")
+def index():
+    return redirect(url_for("login"))
 # ─────────────────────────────────────
 # DB HELPER
 # ─────────────────────────────────────
