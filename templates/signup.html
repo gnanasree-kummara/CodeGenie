@@ -24,15 +24,29 @@
                placeholder="Enter your email"
                required>
 
-        <input type="password"
-               name="password"
-               placeholder="Create password"
-               required>
+        <!-- Password with show/hide -->
+        <div style="position:relative;">
+            <input type="password"
+                   name="password"
+                   id="password"
+                   placeholder="Create password"
+                   required
+                   style="width:100%; padding-right:40px;">
+
+            <span onclick="togglePassword()"
+                  style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">
+                👁️
+            </span>
+        </div>
+
+        <!-- Password validation message -->
+        <p id="passwordError"
+           style="color:red; font-size:13px; display:none;">
+            Password must be at least 6 characters
+        </p>
 
         <button type="submit">Sign Up</button>
-        {% if error %}
-        <p style="color:red; text-align:center;">{{ error }}</p>
-        {% endif %}
+
     </form>
 
     <p class="signup-text">
@@ -41,6 +55,33 @@
     </p>
 
 </div>
+
+<!-- JS -->
+<script>
+    // Password validation
+    document.querySelector("form").addEventListener("submit", function(e) {
+        const password = document.getElementById("password").value;
+        const error = document.getElementById("passwordError");
+
+        if (password.length < 6) {
+            e.preventDefault();
+            error.style.display = "block";
+        } else {
+            error.style.display = "none";
+        }
+    });
+
+    // Show / Hide password
+    function togglePassword() {
+        const pwd = document.getElementById("password");
+
+        if (pwd.type === "password") {
+            pwd.type = "text";
+        } else {
+            pwd.type = "password";
+        }
+    }
+</script>
 
 </body>
 </html>

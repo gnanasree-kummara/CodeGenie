@@ -530,8 +530,24 @@ new Chart(document.getElementById('dailyChart'), {
             legend: { labels: { color: 'white' } }
         },
         scales: {
-            x: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-            y: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            x: {
+                ticks: {
+                    color: 'rgba(255,255,255,0.6)',
+                    autoSkip: true,          // 🔥 skips extra labels
+                    maxTicksLimit: 7,        // 🔥 limits number of dates
+                    maxRotation: 0,          // 🔥 keeps text straight
+                    minRotation: 0,
+                    callback: function(value, index, values) {
+                        const label = this.getLabelForValue(value);
+                        return label.slice(5); // 🔥 shows MM-DD instead of full date
+                    }
+                },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+                ticks: { color: 'rgba(255,255,255,0.6)' },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            }
         }
     }
 });

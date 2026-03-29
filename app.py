@@ -97,28 +97,37 @@ def explain_code(code, language="Python"):
 # ─────────────────────────────────────
 # LOGIN
 # ─────────────────────────────────────
-@app.route('/')
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET','POST'])
 def login():
-    error = None
-    if request.method == "POST":
+    if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        conn = get_db()
-        user = conn.execute(
-            "SELECT * FROM users WHERE email=?", (email,)
+
+        conn = sqlite3.connect('users.db')
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        user = cursor.execute(
+            "SELECT * FROM users WHERE email=?",
+            (email,)
         ).fetchone()
+
         conn.close()
-        if user is None:
-            error = "User not found. Please sign up."
-        elif password != user['password']:
-            error = "Incorrect password."
-        else:
-            session['user'] = user['name']
-            session['user_id'] = user['id']
-            log_activity(user['id'], user['name'], "Login", "User logged in")
-            return redirect(url_for('home'))
-    return render_template("login.html", error=error)
+
+        # User not found
+        if not user:
+            return render_template("login.html", error="User not found. Please sign up.")
+
+        # Password wrong
+        if user['password'] != password:
+            return render_template("login.html", error="Incorrect password")
+
+        # Success
+        session['user'] = user['name']
+        session['user_id'] = user['id']
+        return redirect(url_for('home'))
+
+    return render_template("login.html")
 
 # ─────────────────────────────────────
 # SIGNUP

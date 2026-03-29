@@ -23,6 +23,9 @@
                 New user? Sign Up
             </a>
         </p>
+        {% if error %}
+        <p style="color:red; text-align:center;">{{ error }}</p>
+        {% endif %}
         <button type="submit">Sign In</button>
     </form>
 </div>
