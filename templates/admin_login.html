@@ -3,6 +3,7 @@
 <head>
     <title>Admin Login - Code Genie</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+
     <style>
         .admin-badge {
             background: linear-gradient(90deg, #ff4e50, #f9d423);
@@ -16,28 +17,49 @@
         }
     </style>
 </head>
+
 <body>
 
 <div class="login-container">
+
     <div class="admin-badge">🔐 Admin Access</div>
+
     <h1>Code Genie</h1>
     <p>Admin Dashboard Login</p>
 
-    <form method="POST">
-        <input type="text" name="username" placeholder="Admin username" required>
-        <input type="password" name="password" placeholder="Admin password" required>
+    <form method="POST" autocomplete="off">
+
+        <!-- Hidden fields to prevent autofill -->
+        <input type="text" style="display:none">
+        <input type="password" style="display:none">
+
+        <input type="text"
+               name="admin_username"
+               placeholder="Admin username"
+               autocomplete="new-username"
+               required>
+
+        <input type="password"
+               name="admin_password"
+               placeholder="Admin password"
+               autocomplete="new-password"
+               required>
 
         {% if error %}
-        <p style="color:#ffb3b3; font-size:14px; text-align:center;">{{ error }}</p>
+        <p style="color:#ffb3b3; font-size:14px; text-align:center;">
+            {{ error }}
+        </p>
         {% endif %}
 
         <button type="submit">Login as Admin</button>
+
     </form>
 
     <p class="signup-text">
         Not an admin?
         <a href="{{ url_for('login') }}">User Login</a>
     </p>
+
 </div>
 
 </body>

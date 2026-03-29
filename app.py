@@ -275,8 +275,8 @@ def profile():
 def admin_login():
     error = None
     if request.method == "POST":
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get("admin_username")
+        password = request.form.get("admin_password")
         conn = get_db()
         admin = conn.execute(
             "SELECT * FROM admins WHERE username=? AND password=?",
