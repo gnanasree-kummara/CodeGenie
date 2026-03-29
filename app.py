@@ -115,7 +115,8 @@ def login():
         conn.close()
 
         if user:
-            session['user'] = user[1]  # store name
+            session['user'] = user[1]     # name
+            session['user_id'] = user[0]  # 🔥 VERY IMPORTANT FIX
             return redirect(url_for("home"))
         else:
             return render_template("login.html", error="Invalid email or password")
@@ -237,24 +238,30 @@ def feedback():
 # ─────────────────────────────────────
 @app.route('/profile')
 def profile():
-    if 'user' not in session:
+    if 'user' not in session or 'user_id' not in session:
         return redirect(url_for('login'))
 
     conn = get_db()
+
     user_info = conn.execute(
-        "SELECT * FROM users WHERE id=?", (session['user_id'],)
+        "SELECT * FROM users WHERE id=?",
+        (session['user_id'],)
     ).fetchone()
+
     history = conn.execute(
         "SELECT * FROM code_history WHERE user_id=? ORDER BY timestamp DESC LIMIT 10",
         (session['user_id'],)
     ).fetchall()
+
     feedbacks = conn.execute(
         "SELECT * FROM feedback WHERE user_id=? ORDER BY timestamp DESC",
         (session['user_id'],)
     ).fetchall()
+
     conn.close()
 
-    return render_template("profile.html",
+    return render_template(
+        "profile.html",
         user=session['user'],
         user_info=user_info,
         history=history,
