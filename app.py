@@ -135,28 +135,32 @@ def login():
 # ─────────────────────────────────────
 # SIGNUP
 # ─────────────────────────────────────
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        conn = get_db()
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
+
+        conn = sqlite3.connect("users.db")
+        cursor = conn.cursor()
+
         try:
-            conn.execute(
-                "INSERT INTO users(name, email, password) VALUES(?,?,?)",
+            cursor.execute(
+                "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
                 (name, email, password)
             )
             conn.commit()
+
+            # ✅ IMPORTANT: redirect after signup
+            return redirect(url_for("login"))
+
         except:
-            return render_template("signup.html", error="Email already exists!")
-        conn.commit()
-        user = conn.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
-        conn.close()
-        session['user'] = name
-        session['user_id'] = user['id']
-        log_activity(user['id'], name, "Signup", "New user registered")
-        return redirect(url_for('home'))
+            return render_template("signup.html", error="User already exists")
+
+        finally:
+            conn.close()
+
     return render_template("signup.html")
 
 # ─────────────────────────────────────

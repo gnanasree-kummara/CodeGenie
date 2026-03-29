@@ -10,9 +10,9 @@
     <h1>Code Genie</h1>
     <p>AI Explainer & Code Generator</p>
 
-    <form method="POST">
-        <input type="email" name="email" placeholder="Enter your email">
-        <input type="password" name="password" placeholder="Enter your password">
+    <form method="POST" autocomplete="off">
+        <input type="email" name="email" placeholder="Enter your email" autocomplete="off">
+        <input type="password" name="password" placeholder="Enter your password" autocomplete="off">
         {% if error %}
         <p style="color:red; font-size:14px; text-align:center;">
             {{ error }}
@@ -23,9 +23,6 @@
                 New user? Sign Up
             </a>
         </p>
-        {% if error %}
-        <p style="color:red; text-align:center;">{{ error }}</p>
-        {% endif %}
         <button type="submit">Sign In</button>
     </form>
 </div>
