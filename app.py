@@ -13,7 +13,7 @@ DB_PATH = os.path.join(BASE_DIR, "users.db")
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "codegenie_secret"
+app.secret_key = os.environ.get("SECRET_KEY", "fallback_secret")
 
 HF_TOKEN = os.getenv("HF_TOKEN")
 HF_API_URL = "https://router.huggingface.co/v1/chat/completions"
