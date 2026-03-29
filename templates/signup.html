@@ -30,7 +30,9 @@
                required>
 
         <button type="submit">Sign Up</button>
-
+        {% if error %}
+        <p style="color:red; text-align:center;">{{ error }}</p>
+        {% endif %}
     </form>
 
     <p class="signup-text">

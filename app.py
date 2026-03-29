@@ -130,10 +130,14 @@ def signup():
         email = request.form['email']
         password = request.form['password']
         conn = get_db()
-        conn.execute(
-            "INSERT INTO users(name, email, password) VALUES(?,?,?)",
-            (name, email, password)
-        )
+        try:
+            conn.execute(
+                "INSERT INTO users(name, email, password) VALUES(?,?,?)",
+                (name, email, password)
+            )
+            conn.commit()
+        except:
+            return render_template("signup.html", error="Email already exists!")
         conn.commit()
         user = conn.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
         conn.close()
