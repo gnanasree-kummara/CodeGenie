@@ -106,7 +106,7 @@ def login():
         email = request.form.get("user_email")
         password = request.form.get("user_password")
 
-        conn = sqlite3.connect("users.db")
+        conn = get_db()
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
@@ -133,7 +133,7 @@ def signup():
         email = request.form.get("email")
         password = request.form.get("password")
 
-        conn = sqlite3.connect("users.db")
+        conn = get_db()
         cursor = conn.cursor()
 
         try:
@@ -145,6 +145,7 @@ def signup():
 
             # ✅ Auto login after signup
             session['user'] = name
+            session['user_id'] = cursor.lastrowid
 
             return redirect(url_for("home"))
 
@@ -161,7 +162,7 @@ def signup():
 # ─────────────────────────────────────
 @app.route('/home')
 def home():
-    if 'user' not in session:
+    if 'user' not in session or 'user_id' not in session:
         return redirect(url_for('login'))
     return render_template("home.html", user=session['user'])
 
@@ -170,7 +171,7 @@ def home():
 # ─────────────────────────────────────
 @app.route('/generate-page', methods=['GET', 'POST'])
 def generate_page():
-    if 'user' not in session:
+    if 'user' not in session or 'user_id' not in session:
         return redirect(url_for('login'))
 
     generated_code = ""
@@ -214,7 +215,7 @@ def generate_page():
 # ─────────────────────────────────────
 @app.route('/feedback', methods=['GET', 'POST'])
 def feedback():
-    if 'user' not in session:
+    if 'user' not in session or 'user_id' not in session:
         return redirect(url_for('login'))
 
     success = False
@@ -382,48 +383,48 @@ def logout():
     return redirect(url_for('login'))
 
 
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS users(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS code_history(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        user_name TEXT,
-        language TEXT,
-        prompt TEXT,
-        generated_code TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS feedback(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        user_name TEXT,
-        message TEXT,
-        rating INTEGER,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS activity_logs(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        user_name TEXT,
-        action TEXT,
-        details TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS admins(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL)""")
-    cursor.execute("INSERT OR IGNORE INTO admins(username, password) VALUES('admin', 'admin123')")
-    conn.commit()
-    conn.close()
-
-init_db()
+# def init_db():
+#     conn = sqlite3.connect(DB_PATH)
+#     cursor = conn.cursor()
+#     cursor.execute("""CREATE TABLE IF NOT EXISTS users(
+#         id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         name TEXT NOT NULL,
+#         email TEXT UNIQUE NOT NULL,
+#         password TEXT NOT NULL,
+#         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+#     cursor.execute("""CREATE TABLE IF NOT EXISTS code_history(
+#         id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         user_id INTEGER,
+#         user_name TEXT,
+#         language TEXT,
+#         prompt TEXT,
+#         generated_code TEXT,
+#         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+#     cursor.execute("""CREATE TABLE IF NOT EXISTS feedback(
+#         id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         user_id INTEGER,
+#         user_name TEXT,
+#         message TEXT,
+#         rating INTEGER,
+#         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+#     cursor.execute("""CREATE TABLE IF NOT EXISTS activity_logs(
+#         id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         user_id INTEGER,
+#         user_name TEXT,
+#         action TEXT,
+#         details TEXT,
+#         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+#     cursor.execute("""CREATE TABLE IF NOT EXISTS admins(
+#         id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         username TEXT UNIQUE NOT NULL,
+#         password TEXT NOT NULL)""")
+#     cursor.execute("INSERT OR IGNORE INTO admins(username, password) VALUES('admin', 'admin123')")
+#     conn.commit()
+#     conn.close()
 # ─────────────────────────────────────
 # RUN
 # ─────────────────────────────────────
+# init_db()
+
 if __name__ == '__main__':
     app.run(debug=True)
